@@ -1,5 +1,6 @@
 package dev.vanderloureiro.springboot_cache_std;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +18,18 @@ public class ExemploResource {
             4L, new Filme("4", "4")
     );
 
+    @Cacheable("filmes")
     @GetMapping("/{id}")
     public ResponseEntity<Filme> get(@PathVariable Long id) {
-        return ResponseEntity.ok(filmes.get(id));
+        return ResponseEntity.ok(buscaPorId(id));
+    }
+    
+    private Filme buscaPorId(Long id) {
+        try {
+            Thread.sleep(1000);
+            return filmes.get(id);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
